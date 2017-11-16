@@ -22,11 +22,8 @@ function initialIjection() {
 	var today = new Date();
 	var dayOfMonth = today.getDate();
 	var dayOfWeek = today.getDay();
-	if (dayOfMonth > 24) {
-		dayOfMonth -= daysOfMonth(today);
-	}
 
-	var daysLeft = 25 - dayOfMonth - ~~((25 - dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((25 - dayOfMonth + dayOfWeek) / 7);
+	var daysLeft = dayOfMonth - ~~((dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((dayOfMonth + dayOfWeek) / 7);
 
 	var alreadyOrderedToday = Array.prototype.some.call(
 		document.querySelectorAll(".reportDataTr .reportDataTd:nth-of-type(2)"),
@@ -70,3 +67,4 @@ function initialIjection() {
 
 function loadedInjection() {
 }
+
