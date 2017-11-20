@@ -24,21 +24,21 @@ function initialIjection() {
 	var dayOfWeek = today.getDay();
 	var year = today.getFullYear()
 	var month = today.getMonth() + 1
-	var daysInMonth = new Date(year, month, 0).getDate() + 1;
+	var daysInMonth = parseInt(/[\d\.]+/.exec(document.querySelector(".reportGeneralDataFieldValueTd").innerText).input.slice(7,9))
 	var daysLeft = daysInMonth - dayOfMonth - ~~((daysInMonth - dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((daysInMonth - dayOfMonth + dayOfWeek) / 7);
 
 	var alreadyOrderedToday = Array.prototype.some.call(
 		document.querySelectorAll(".reportDataTr .reportDataTd:nth-of-type(2)"),
 		function(val) {
 			[date, month, year] = val.innerText.split('/');
-			return new Date(year, month - 1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
+			return new Date(year, month + 1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
 		}
 	);
 	if (alreadyOrderedToday) {
 		daysLeft--;
 	}
 
-	var remainder = 1000 - /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(4)").innerText);
+	var remainder = /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(6)").innerText) - /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(4)").innerText);
 	var dailyRemainder = remainder / daysLeft;
 	document.querySelector(".userReportDataTbl tr:last-child").insertAdjacentHTML('beforebegin', `
 		<tr>
