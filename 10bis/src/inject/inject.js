@@ -22,8 +22,10 @@ function initialIjection() {
 	var today = new Date();
 	var dayOfMonth = today.getDate();
 	var dayOfWeek = today.getDay();
-
-	var daysLeft = dayOfMonth - ~~((dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((dayOfMonth + dayOfWeek) / 7);
+	var year = today.getFullYear()
+	var month = today.getMonth() + 1
+	var daysInMonth = new Date(year, month, 0).getDate() + 1;
+	var daysLeft = daysInMonth - dayOfMonth - ~~((daysInMonth - dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((daysInMonth - dayOfMonth + dayOfWeek) / 7);
 
 	var alreadyOrderedToday = Array.prototype.some.call(
 		document.querySelectorAll(".reportDataTr .reportDataTd:nth-of-type(2)"),
