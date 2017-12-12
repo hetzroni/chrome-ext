@@ -10,28 +10,37 @@ chrome.extension.sendMessage({}, function(response) {
 	}, 10);
 });
 
-function daysOfMonth(date) {
-  date = new Date(date);
-  date.setDate(1);
-  date.setMonth(date.getMonth() + 1);
-  date.setDate(0);
-  return date.getDate();
+function daysInMonth(month, year) {
+return 32 - new Date(year, month, 32).getDate();
 }
+
+function isWeekday(year, month, day) {
+var day = new Date(year, month, day).getDay();
+return day !=5 && day !=6;
+}
+
+function getWeekdaysInMonth(month, year) {
+var days = daysInMonth(month, year);
+var weekdays = 0;
+var today = new Date();
+var dayOfMonth = today.getDate();
+for(var i=dayOfMonth; i< days+1; i++) {
+    if (isWeekday(year, month, i+1)) weekdays++;
+}
+return weekdays;
+}
+
 
 function initialIjection() {
 	var today = new Date();
-	var dayOfMonth = today.getDate();
-	var dayOfWeek = today.getDay();
 	var year = today.getFullYear()
-	var month = today.getMonth() + 1
-	var daysInMonth = parseInt(/[\d\.]+/.exec(document.querySelector(".reportGeneralDataFieldValueTd").innerText).input.slice(7,9))
-	var daysLeft = daysInMonth - dayOfMonth - ~~((daysInMonth - dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((daysInMonth - dayOfMonth + dayOfWeek) / 7);
-
+	var month = today.getMonth()
+    var daysLeft = getWeekdaysInMonth(month, year)
 	var alreadyOrderedToday = Array.prototype.some.call(
 		document.querySelectorAll(".reportDataTr .reportDataTd:nth-of-type(2)"),
 		function(val) {
 			[date, month, year] = val.innerText.split('/');
-			return new Date(year, month + 1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
+			return new Date(year, month-1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
 		}
 	);
 	if (alreadyOrderedToday) {
