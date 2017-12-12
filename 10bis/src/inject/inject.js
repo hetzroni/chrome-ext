@@ -10,36 +10,44 @@ chrome.extension.sendMessage({}, function(response) {
 	}, 10);
 });
 
-function daysOfMonth(date) {
-  date = new Date(date);
-  date.setDate(1);
-  date.setMonth(date.getMonth() + 1);
-  date.setDate(0);
-  return date.getDate();
+function daysInMonth(month, year) {
+return 32 - new Date(year, month, 32).getDate();
 }
+
+function isWeekday(year, month, day) {
+var day = new Date(year, month, day).getDay();
+return day !=5 && day !=6;
+}
+
+function getWeekdaysInMonth(month, year) {
+var days = daysInMonth(month, year);
+var weekdays = 0;
+var today = new Date();
+var dayOfMonth = today.getDate();
+for(var i=dayOfMonth; i< days+1; i++) {
+    if (isWeekday(year, month, i+1)) weekdays++;
+}
+return weekdays;
+}
+
 
 function initialIjection() {
 	var today = new Date();
-	var dayOfMonth = today.getDate();
-	var dayOfWeek = today.getDay();
-	if (dayOfMonth > 24) {
-		dayOfMonth -= daysOfMonth(today);
-	}
-
-	var daysLeft = 25 - dayOfMonth - ~~((25 - dayOfMonth + (dayOfWeek + 1) % 7) / 7) - ~~((25 - dayOfMonth + dayOfWeek) / 7);
-
+	var year = today.getFullYear()
+	var month = today.getMonth()
+    var daysLeft = getWeekdaysInMonth(month, year)
 	var alreadyOrderedToday = Array.prototype.some.call(
 		document.querySelectorAll(".reportDataTr .reportDataTd:nth-of-type(2)"),
 		function(val) {
 			[date, month, year] = val.innerText.split('/');
-			return new Date(year, month - 1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
+			return new Date(year, month-1, date).setHours(0, 0, 0, 0) == new Date().setHours(0, 0, 0, 0);
 		}
 	);
 	if (alreadyOrderedToday) {
 		daysLeft--;
 	}
 
-	var remainder = 1000 - /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(4)").innerText);
+	var remainder = /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(6)").innerText) - /[\d\.]+/.exec(document.querySelector(".userReportDataTbl .currency:nth-child(4)").innerText);
 	var dailyRemainder = remainder / daysLeft;
 	document.querySelector(".userReportDataTbl tr:last-child").insertAdjacentHTML('beforebegin', `
 		<tr>
@@ -70,3 +78,4 @@ function initialIjection() {
 
 function loadedInjection() {
 }
+
